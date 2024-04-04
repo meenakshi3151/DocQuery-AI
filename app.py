@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 import os
 from pandasai import SmartDataframe
 from pandasai.llm import GooglePalm
+import seaborn as sns
+
 
 load_dotenv()
 
@@ -33,11 +35,15 @@ if input_csv is not None:
       st.dataframe(data)
     
    with col2:
-      st.info("Chat with your CSV")
-
-      input_text = st.text_area("Enter your query")
-      if input_text is not None:
-         if st.button("Ask"):
-            st.info("Your query:"+input_text)
-            result = chat_with_csv(data,input_text)
+    st.info("Chat with your CSV")
+    input_text = st.text_area("Enter your query")  # check why 1st word not coming
+    if input_text is not None:
+        col1, col2 = st.columns([1,4])  # Create two columns
+        if col1.button("Ask Query"):
+            st.info("Your query:" + " " + input_text)
+            result = chat_with_csv(data, input_text)
             st.success(result)
+        if col2.button("Plot Graph"):
+            st.info("Your query:" + " " + input_text)
+            result = chat_with_csv(data, input_text)
+            st.image('exports/charts/temp_chart.png')
