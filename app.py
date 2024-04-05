@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 import os
 from pandasai import SmartDataframe
 from pandasai.llm import GooglePalm
-import seaborn as sns
 
 
 load_dotenv()
