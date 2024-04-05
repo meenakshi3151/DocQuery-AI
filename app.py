@@ -5,7 +5,9 @@ import os
 from pandasai import SmartDataframe
 from pandasai.llm import GooglePalm
 
+import google.generativeai as genai
 
+from PyPDF2 import PdfReader  
 load_dotenv()
 
 api = os.getenv('API_KEY')
@@ -21,7 +23,7 @@ def chat_with_csv(data,prompt):
 
 st.set_page_config(layout="wide")
 
-st.title("ChatCSV powered by LLM")
+st.title("ChatWithFiles powered by LLM")
 
 input_csv = st.file_uploader("Upload your CSV file",type=['csv'])
 
@@ -46,3 +48,33 @@ if input_csv is not None:
             st.info("Your query:" + " " + input_text)
             result = chat_with_csv(data, input_text)
             st.image('exports/charts/temp_chart.png')
+def extract_text_from_pdf(pdf_file):
+    text = ""
+   #  print("hello")
+    with pdf_file as file:
+        reader = PdfReader(file)
+        for page in reader.pages:
+            text += page.extract_text()
+
+    return text
+
+def chat_with_pdf(text):
+    genai.configure(api_key=os.environ['API_KEY'])
+    model = genai.GenerativeModel('gemini-pro')
+    response = model.generate_content(text)
+    return response.text
+
+input_pdf = st.file_uploader("Upload your PDF file to summarize it", type=['pdf'])
+# print("hi")
+if input_pdf is not None:
+    col1, col2 = st.columns([1, 1])
+
+    with col1:
+        st.info("PDF uploaded successfully")
+        text = extract_text_from_pdf(input_pdf)
+        st.text_area("PDF Text", text, height=500)
+
+    with col2:
+            if st.button("Generate Summary"):
+                result = chat_with_pdf(text)
+                st.success(result)
