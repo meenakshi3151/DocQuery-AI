@@ -9,10 +9,17 @@ import google.generativeai as genai
 
 from PyPDF2 import PdfReader  
 load_dotenv()
+genai.configure(api_key=os.environ['API_KEY'])
 
 api = os.getenv('API_KEY')
+model = genai.GenerativeModel('gemini-pro')
 
 # Function for pandas ai to query a csv file
+def chat_with_pdf(text, prompt):
+
+    response = model.generate_content(prompt+" The pdf document text is given as: "+text)
+    print(response.text)
+    return response.text
 def chat_with_csv(data,prompt):
    llm = GooglePalm(api_key = api)
    df = SmartDataframe(data,config={"llm":llm})
@@ -48,6 +55,8 @@ if input_csv is not None:
             st.info("Your query:" + " " + input_text)
             result = chat_with_csv(data, input_text)
             st.image('exports/charts/temp_chart.png')
+
+
 def extract_text_from_pdf(pdf_file):
     text = ""
    #  print("hello")
@@ -58,13 +67,8 @@ def extract_text_from_pdf(pdf_file):
 
     return text
 
-def chat_with_pdf(text):
-    genai.configure(api_key=os.environ['API_KEY'])
-    model = genai.GenerativeModel('gemini-pro')
-    response = model.generate_content(text)
-    return response.text
 
-input_pdf = st.file_uploader("Upload your PDF file to summarize it", type=['pdf'])
+input_pdf = st.file_uploader("Upload your PDF file ", type=['pdf'])
 # print("hi")
 if input_pdf is not None:
     col1, col2 = st.columns([1, 1])
@@ -73,8 +77,11 @@ if input_pdf is not None:
         st.info("PDF uploaded successfully")
         text = extract_text_from_pdf(input_pdf)
         st.text_area("PDF Text", text, height=500)
-
     with col2:
-            if st.button("Generate Summary"):
-                result = chat_with_pdf(text)
+        st.info("Chat with your PDF")
+        input_text = st.text_area("Enter your query")
+        if input_text is not None:
+            if st.button("Ask Query"):
+                st.info("Your query: {}".format(input_text))
+                result = chat_with_pdf(text, input_text)
                 st.success(result)
