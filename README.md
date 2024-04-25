@@ -40,7 +40,7 @@ pip install PyPDF2.
 4. Meenakshi Gupta
 
 ## Contributing:
-Contributions are welcome! Feel free to open issues or pull requests for any enhancements or bug fixes.
-- 
+   - Contributions are welcome! Feel free to open issues or pull requests for any enhancements or bug fixes.
+ 
 This project is made under the Artificial Intelligence Course (CSN14403) led by Dr. Shashank Srivastava, MNNIT.
 
